@@ -30,13 +30,30 @@ function updatePlayer(dt, canvasWidth, canvasHeight) {
   input.jumpPressed = false; // consume the press so it can't fire later in mid-air
 
   // Gravity changes velocity; velocity changes position.
+  const prevBottom = player.y + player.height; // where his feet were last frame
   player.vy += GRAVITY * dt;
   player.y += player.vy * dt;
+  const bottom = player.y + player.height; // where his feet are now
 
-  // Land exactly on the top of the field.
-  const floorY = canvasHeight - FIELD_HEIGHT - player.height;
-  if (player.y >= floorY) {
-    player.y = floorY;
+  // Find the highest surface his feet crossed this frame (platforms or the field).
+  let landingY = null;
+  const fieldTop = canvasHeight - FIELD_HEIGHT;
+  if (bottom >= fieldTop) landingY = fieldTop;
+
+  // One-way platforms: only count them while falling (vy >= 0), and only if his
+  // feet were at or above the top last frame, so he passes up through from below.
+  if (player.vy >= 0) {
+    for (const p of world.platforms) {
+      const overlapsX = player.x + player.width > p.x && player.x < p.x + p.width;
+      const crossedTop = prevBottom <= p.y && bottom >= p.y;
+      if (overlapsX && crossedTop && (landingY === null || p.y < landingY)) {
+        landingY = p.y;
+      }
+    }
+  }
+
+  if (landingY !== null) {
+    player.y = landingY - player.height;
     player.vy = 0;
     player.onGround = true;
   } else {

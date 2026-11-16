@@ -6,6 +6,9 @@ const HELMET_COLOR = "#C8102E";
 const HELMET_STRIPE = "#000000";
 const MASK_GRAY = "#6B7280";
 const EAR_HOLE = "#1A1A1A";
+const PLATFORM_TOP = "#C9A66B";
+const PLATFORM_BODY = "#4B5563";
+const PLATFORM_LINE = "#2D3340";
 
 // How far the face mask sticks out past the helmet circle, and how thick its bars are.
 // player.js uses these to keep the whole mask on screen.
@@ -20,6 +23,24 @@ function drawSky(ctx, canvas) {
 function drawField(ctx, canvas) {
   ctx.fillStyle = FIELD_COLOR;
   ctx.fillRect(0, canvas.height - FIELD_HEIGHT, canvas.width, FIELD_HEIGHT);
+}
+
+// Each platform is a raised bleacher block: a wooden plank top over a dark steel body
+// with a couple of bench lines.
+function drawPlatforms(ctx, platforms) {
+  for (const p of platforms) {
+    ctx.fillStyle = PLATFORM_BODY;
+    ctx.fillRect(p.x, p.y, p.width, p.height);
+
+    ctx.fillStyle = PLATFORM_TOP;
+    ctx.fillRect(p.x, p.y, p.width, 8);
+
+    ctx.fillStyle = PLATFORM_LINE;
+    ctx.fillRect(p.x, p.y + p.height / 2 + 2, p.width, 2);
+    for (let x = p.x + 20; x < p.x + p.width - 4; x += 40) {
+      ctx.fillRect(x, p.y + 8, 3, p.height - 8);
+    }
+  }
 }
 
 function drawPlayer(ctx, player) {
@@ -71,5 +92,6 @@ function drawPlayer(ctx, player) {
 function drawScene(ctx, canvas, player) {
   drawSky(ctx, canvas);
   drawField(ctx, canvas);
+  drawPlatforms(ctx, world.platforms);
   drawPlayer(ctx, player);
 }
