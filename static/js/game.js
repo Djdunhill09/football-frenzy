@@ -8,7 +8,7 @@ function startGame(canvas, ctx) {
     const dt = Math.min((now - lastTime) / 1000, 0.05);
     lastTime = now;
 
-    updatePlayer(dt, canvas.width);
+    updatePlayer(dt, canvas.width, canvas.height);
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawScene(ctx, canvas, player);

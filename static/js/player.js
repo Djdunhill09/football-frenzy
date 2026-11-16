@@ -1,4 +1,10 @@
+const GRAVITY = 2000; // pixels per second squared
+const JUMP_SPEED = 750; // initial upward speed in pixels per second
+// The field height (FIELD_HEIGHT) is defined in renderer.js and passed in below.
+
 const player = {
+  vy: 0, // vertical velocity in pixels per second (positive = falling)
+  onGround: true,
   x: 180,
   y: 0,
   width: 40,
@@ -15,7 +21,28 @@ function standPlayerOnField(canvasHeight, fieldHeight) {
 }
 
 // dt is the time since the last frame, in seconds.
-function updatePlayer(dt, canvasWidth) {
+function updatePlayer(dt, canvasWidth, canvasHeight) {
+  // Jump only from the ground, and only on a fresh key press.
+  if (input.jumpPressed && player.onGround) {
+    player.vy = -JUMP_SPEED; // negative = upward on the canvas
+    player.onGround = false;
+  }
+  input.jumpPressed = false; // consume the press so it can't fire later in mid-air
+
+  // Gravity changes velocity; velocity changes position.
+  player.vy += GRAVITY * dt;
+  player.y += player.vy * dt;
+
+  // Land exactly on the top of the field.
+  const floorY = canvasHeight - FIELD_HEIGHT - player.height;
+  if (player.y >= floorY) {
+    player.y = floorY;
+    player.vy = 0;
+    player.onGround = true;
+  } else {
+    player.onGround = false;
+  }
+
   player.vx = 0;
   if (input.left) player.vx -= player.speed;
   if (input.right) player.vx += player.speed;
