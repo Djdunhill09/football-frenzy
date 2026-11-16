@@ -1,5 +1,6 @@
 const GRAVITY = 2000; // pixels per second squared
 const JUMP_SPEED = 750; // initial upward speed in pixels per second
+const MUD_SPEED_FACTOR = 0.5; // horizontal speed multiplier while in mud
 // The field height (FIELD_HEIGHT) is defined in renderer.js and passed in below.
 
 const player = {
@@ -75,9 +76,12 @@ function updatePlayer(dt, canvasWidth, canvasHeight) {
     player.onGround = false;
   }
 
+  // Mud only scales horizontal speed; GRAVITY and JUMP_SPEED are untouched.
+  const inMud = world.mud.some((m) => rectsOverlap(player, m));
+  const speed = inMud ? player.speed * MUD_SPEED_FACTOR : player.speed;
   player.vx = 0;
-  if (input.left) player.vx -= player.speed;
-  if (input.right) player.vx += player.speed;
+  if (input.left) player.vx -= speed;
+  if (input.right) player.vx += speed;
 
   if (player.vx < 0) player.facing = "left";
   else if (player.vx > 0) player.facing = "right";

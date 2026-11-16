@@ -41,6 +41,7 @@ async function loadLevelFromServer(levelNumber) {
 }
 
 function placePlayerAtStart(canvas) {
+  resetHazards(); // moving defenders restart their patrols with every respawn
   if (world.start) resetPlayer(world.start);
   else standPlayerOnField(canvas.height, FIELD_HEIGHT);
 }
@@ -102,6 +103,7 @@ function startGame(canvas, ctx) {
     input.nextPressed = false;
 
     if (gameStatus === STATUS_PLAYING) {
+      updateHazards(dt);
       updatePlayer(dt, canvas.width, canvas.height);
 
       // Falling into a gap: his top has dropped below the bottom edge of the canvas.

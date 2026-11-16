@@ -52,6 +52,42 @@ LEVELS = {
         ],
         "goal": {"x": 720, "y": 294, "width": 80, "height": 100},
     },
+    3: {
+        "number": 3,
+        "name": "The Final Drive",
+        "sky": "night",
+        "weather": "rain",
+        # Turf with gaps 180-270 and 420-510 (90 wide each), easy to cross like Level 2.
+        "ground": [
+            {"x": 0, "width": 180},
+            {"x": 270, "width": 150},
+            {"x": 510, "width": 290},
+        ],
+        # Mud puddles lying on the turf (field top y = 394, puddles are 8 px deep).
+        "mud": [
+            {"x": 80, "y": 386, "width": 70, "height": 8},    # turf 1
+            {"x": 545, "y": 386, "width": 80, "height": 8},   # under the stairs
+        ],
+        # The climb. Rises: field -> 330 is 64, -> 265 is 65, -> 200 is 65, and the last
+        # jump to the raised end zone (top 115) is 85 up across a 55 px gap, the hardest
+        # in the game. Blitz jumps 140 high and ~225 across, so all of these are possible.
+        "platforms": [
+            {"x": 490, "y": 330, "width": 45, "height": 30},
+            {"x": 550, "y": 265, "width": 50, "height": 30},
+            {"x": 620, "y": 200, "width": 45, "height": 30},
+            {"x": 720, "y": 115, "width": 80, "height": 30},  # end zone platform
+        ],
+        # Start is on turf 1 (x 40-80), left of every patrol range.
+        "start": {"x": 40, "y": 354},
+        # Moving defenders patrol between minX and maxX (left edge x), speed in px/s.
+        "hazards": [
+            {"kind": "defender", "x": 300, "y": 344, "width": 30, "height": 50,
+             "minX": 300, "maxX": 385, "speed": 70},   # turf 2 (spans 300-415)
+            {"kind": "defender", "x": 650, "y": 344, "width": 30, "height": 50,
+             "minX": 650, "maxX": 750, "speed": 90},   # turf 3, under the stairs
+        ],
+        "goal": {"x": 720, "y": 35, "width": 80, "height": 80},
+    },
 }
 
 

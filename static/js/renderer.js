@@ -19,6 +19,9 @@ const GOALPOST_COLOR = "#FACC15";
 const SLED_PAD = "#B45309";
 const SLED_FRAME = "#374151";
 const SLED_RUNNER = "#9CA3AF";
+const MUD_COLOR = "#6B4423";
+const MUD_DARK = "#4A2F18";
+const RAIN_COLOR = "rgba(190, 210, 255, 0.55)";
 const HUD_COLOR = "#FFFFFF";
 const MESSAGE_COLOR = "#FFFFFF";
 const MESSAGE_OUTLINE = "#000000";
@@ -125,6 +128,37 @@ function drawHazards(ctx, hazards) {
   }
 }
 
+function drawMud(ctx, mud) {
+  for (const m of mud) {
+    ctx.fillStyle = MUD_COLOR;
+    ctx.beginPath();
+    ctx.ellipse(m.x + m.width / 2, m.y + m.height, m.width / 2, m.height, 0, Math.PI, 0);
+    ctx.fill();
+    ctx.fillStyle = MUD_DARK;
+    ctx.fillRect(m.x + 6, m.y + m.height - 2, m.width - 12, 2);
+  }
+}
+
+// Slanted rain streaks that fall and wrap around. Positions come from the clock, so
+// nothing needs to be stored or reset.
+function drawRain(ctx, canvas) {
+  if (world.weather !== "rain") return;
+  const t = performance.now() / 1000;
+  ctx.strokeStyle = RAIN_COLOR;
+  ctx.lineWidth = 1.5;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  for (let i = 0; i < 90; i++) {
+    const speed = 500 + (i % 5) * 60;
+    const x0 = (i * 97) % canvas.width;
+    const y = (i * 53 + t * speed) % (canvas.height + 20) - 10;
+    const x = (x0 - y * 0.2 + canvas.width * 2) % canvas.width;
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - 3, y + 14);
+  }
+  ctx.stroke();
+}
+
 function drawDowns(ctx, downs, level) {
   ctx.font = "bold 20px sans-serif";
   ctx.textAlign = "left";
@@ -201,9 +235,11 @@ function drawScene(ctx, canvas, player, status, downs, level) {
   drawSky(ctx, canvas);
   drawField(ctx, canvas);
   drawGoal(ctx, world.goal);
+  drawMud(ctx, world.mud);
   drawPlatforms(ctx, world.platforms);
   drawHazards(ctx, world.hazards);
   drawPlayer(ctx, player);
+  drawRain(ctx, canvas);
   drawDowns(ctx, downs, level);
   if (status === STATUS_LEVEL_COMPLETE) {
     drawMessage(ctx, canvas, "TOUCHDOWN!");
