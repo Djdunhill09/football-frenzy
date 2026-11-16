@@ -12,6 +12,10 @@ const PLATFORM_LINE = "#2D3340";
 const END_ZONE_COLOR = "#B91C1C";
 const END_ZONE_STRIPE = "#FFFFFF";
 const GOALPOST_COLOR = "#FACC15";
+const SLED_PAD = "#B45309";
+const SLED_FRAME = "#374151";
+const SLED_RUNNER = "#9CA3AF";
+const HUD_COLOR = "#FFFFFF";
 const MESSAGE_COLOR = "#FFFFFF";
 const MESSAGE_OUTLINE = "#000000";
 
@@ -79,16 +83,45 @@ function drawGoal(ctx, goal) {
   ctx.stroke();
 }
 
-function drawMessage(ctx, canvas, text) {
-  ctx.font = "bold 64px sans-serif";
+// Each tackling sled is a steel frame with a padded block on top, a gray runner
+// along the bottom and two upright pads.
+function drawHazards(ctx, hazards) {
+  for (const h of hazards) {
+    ctx.fillStyle = SLED_RUNNER;
+    ctx.fillRect(h.x, h.y + h.height - 5, h.width, 5);
+
+    ctx.fillStyle = SLED_FRAME;
+    ctx.fillRect(h.x + 4, h.y + h.height - 12, h.width - 8, 8);
+
+    ctx.fillStyle = SLED_PAD;
+    ctx.fillRect(h.x + 4, h.y, 14, h.height - 10);
+    ctx.fillRect(h.x + h.width - 18, h.y, 14, h.height - 10);
+  }
+}
+
+function drawDowns(ctx, downs) {
+  ctx.font = "bold 20px sans-serif";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  ctx.lineWidth = 4;
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = MESSAGE_OUTLINE;
+  ctx.strokeText(`Downs: ${downs}`, 12, 10);
+  ctx.fillStyle = HUD_COLOR;
+  ctx.fillText(`Downs: ${downs}`, 12, 10);
+}
+
+function drawMessage(ctx, canvas, text, yOffset = 0, fontSize = 64) {
+  const y = canvas.height / 2 + yOffset;
+  ctx.font = `bold ${fontSize}px sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.lineWidth = 8;
   ctx.lineJoin = "round";
   ctx.strokeStyle = MESSAGE_OUTLINE;
-  ctx.strokeText(text, canvas.width / 2, canvas.height / 2);
+  ctx.strokeText(text, canvas.width / 2, y);
   ctx.fillStyle = MESSAGE_COLOR;
-  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+  ctx.fillText(text, canvas.width / 2, y);
 }
 
 function drawPlayer(ctx, player) {
@@ -137,11 +170,17 @@ function drawPlayer(ctx, player) {
   ctx.stroke();
 }
 
-function drawScene(ctx, canvas, player, status) {
+function drawScene(ctx, canvas, player, status, downs) {
   drawSky(ctx, canvas);
   drawField(ctx, canvas);
   drawGoal(ctx, world.goal);
   drawPlatforms(ctx, world.platforms);
+  drawHazards(ctx, world.hazards);
   drawPlayer(ctx, player);
+  drawDowns(ctx, downs);
   if (status === STATUS_LEVEL_COMPLETE) drawMessage(ctx, canvas, "TOUCHDOWN!");
+  if (status === STATUS_GAME_OVER) {
+    drawMessage(ctx, canvas, "TURNOVER ON DOWNS");
+    drawMessage(ctx, canvas, "Press R to restart", 50, 28);
+  }
 }

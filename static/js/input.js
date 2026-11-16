@@ -11,11 +11,20 @@ const JUMP_KEYS = [" ", "ArrowUp", "w", "W"];
 // True for one frame after a fresh jump key press. player.js clears it after reading.
 input.jumpPressed = false;
 
+// True for one frame after a fresh R key press. game.js clears it after reading.
+input.restartPressed = false;
+
 function setKey(event, isDown) {
   if (JUMP_KEYS.includes(event.key)) {
     // event.repeat is true while the key is held, so only a new press counts.
     if (isDown && !event.repeat) input.jumpPressed = true;
     event.preventDefault(); // stop Space / Up Arrow from scrolling the page
+    return;
+  }
+
+  if (event.key === "r" || event.key === "R") {
+    // Ignore key repeat so holding R restarts only once.
+    if (isDown && !event.repeat) input.restartPressed = true;
     return;
   }
 
@@ -36,4 +45,5 @@ window.addEventListener("blur", () => {
   input.left = false;
   input.right = false;
   input.jumpPressed = false;
+  input.restartPressed = false;
 });

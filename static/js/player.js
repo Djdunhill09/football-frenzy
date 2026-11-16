@@ -20,6 +20,16 @@ function standPlayerOnField(canvasHeight, fieldHeight) {
   player.y = canvasHeight - fieldHeight - player.height;
 }
 
+// Put Blitz at a { x, y } start position and clear all motion.
+function resetPlayer(start) {
+  player.x = start.x;
+  player.y = start.y;
+  player.vx = 0;
+  player.vy = 0;
+  player.onGround = true;
+  player.facing = "right";
+}
+
 // dt is the time since the last frame, in seconds.
 function updatePlayer(dt, canvasWidth, canvasHeight) {
   // Jump only from the ground, and only on a fresh key press.
