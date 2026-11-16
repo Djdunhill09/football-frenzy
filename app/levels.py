@@ -72,10 +72,14 @@ LEVELS = {
         # jump to the raised end zone (top 115) is 85 up across a 55 px gap, the hardest
         # in the game. Blitz jumps 140 high and ~225 across, so all of these are possible.
         "platforms": [
-            {"x": 490, "y": 330, "width": 45, "height": 30},
             {"x": 550, "y": 265, "width": 50, "height": 30},
             {"x": 620, "y": 200, "width": 45, "height": 30},
             {"x": 720, "y": 115, "width": 80, "height": 30},  # end zone platform
+            # Moving first step (my edit): replaces the old first stair. Same height as
+            # that stair (top 330, 64 above the field) and slides over gap 420-510.
+            # From it to the next stair (x 550, top 265) is a 65 px rise.
+            {"x": 420, "y": 330, "width": 50, "height": 30,
+             "minX": 420, "maxX": 460, "speed": 50},
         ],
         # Start is on turf 1 (x 40-80), left of every patrol range.
         "start": {"x": 40, "y": 354},

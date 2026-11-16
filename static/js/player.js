@@ -6,6 +6,7 @@ const MUD_SPEED_FACTOR = 0.5; // horizontal speed multiplier while in mud
 const player = {
   vy: 0, // vertical velocity in pixels per second (positive = falling)
   onGround: true,
+  riding: null, // the platform he landed on last frame, or null
   x: 180,
   y: 0,
   width: 40,
@@ -28,11 +29,21 @@ function resetPlayer(start) {
   player.vx = 0;
   player.vy = 0;
   player.onGround = true;
+  player.riding = null;
   player.facing = "right";
 }
 
 // dt is the time since the last frame, in seconds.
 function updatePlayer(dt, canvasWidth, canvasHeight) {
+  // Ride along: if he stood on a platform last frame and is still over it, move him by
+  // exactly the distance it moved this frame (updatePlatforms already ran). Doing this
+  // first means walking and jumping below still work from the carried position.
+  const ride = player.riding;
+  player.riding = null;
+  if (ride && player.onGround && player.x + player.width > ride.x && player.x < ride.x + ride.width) {
+    player.x += ride.dx;
+  }
+
   // Jump only from the ground, and only on a fresh key press.
   if (input.jumpPressed && player.onGround) {
     player.vy = -JUMP_SPEED; // negative = upward on the canvas
@@ -48,6 +59,7 @@ function updatePlayer(dt, canvasWidth, canvasHeight) {
 
   // Find the highest surface his feet crossed this frame (platforms or the field).
   let landingY = null;
+  let landingPlatform = null;
   const fieldTop = canvasHeight - FIELD_HEIGHT;
   // The field only counts where there is turf under him (not in a gap), and like the
   // platforms it only catches his feet if they were above it last frame.
@@ -61,14 +73,19 @@ function updatePlayer(dt, canvasWidth, canvasHeight) {
   if (player.vy >= 0) {
     for (const p of world.platforms) {
       const overlapsX = player.x + player.width > p.x && player.x < p.x + p.width;
-      const crossedTop = prevBottom <= p.y && bottom >= p.y;
+      // Compare against where the platform's top was last frame, since both he and
+      // the platform may have moved. (prevY is undefined only before the first reset.)
+      const prevTop = p.prevY === undefined ? p.y : p.prevY;
+      const crossedTop = prevBottom <= prevTop && bottom >= p.y;
       if (overlapsX && crossedTop && (landingY === null || p.y < landingY)) {
         landingY = p.y;
+        landingPlatform = p;
       }
     }
   }
 
   if (landingY !== null) {
+    player.riding = landingPlatform; // null when he landed on the field
     player.y = landingY - player.height;
     player.vy = 0;
     player.onGround = true;

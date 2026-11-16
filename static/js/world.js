@@ -24,6 +24,41 @@ function loadLevel(levelData) {
   world.mud = levelData.mud || [];
   world.weather = levelData.weather || null;
   resetHazards();
+  resetPlatforms();
+}
+
+// Put every moving platform back at its starting spot, heading right, and clear its
+// per-frame movement. Platforms without minX/maxX/speed are never touched by movement.
+function resetPlatforms() {
+  for (const p of world.platforms) {
+    if (p.startX === undefined) p.startX = p.x;
+    p.x = p.startX;
+    p.prevX = p.x;
+    p.prevY = p.y;
+    p.dx = 0;
+    p.dir = 1;
+  }
+}
+
+// Move platforms that have minX/maxX/speed back and forth. dt is in seconds. Every
+// platform records where it was last frame (prevX/prevY) and how far it moved (dx).
+// This must run BEFORE updatePlayer each frame.
+function updatePlatforms(dt) {
+  for (const p of world.platforms) {
+    p.prevX = p.x;
+    p.prevY = p.y;
+    p.dx = 0;
+    if (!p.speed || p.minX === undefined || p.maxX === undefined) continue;
+    p.x += p.dir * p.speed * dt;
+    if (p.x >= p.maxX) {
+      p.x = p.maxX;
+      p.dir = -1;
+    } else if (p.x <= p.minX) {
+      p.x = p.minX;
+      p.dir = 1;
+    }
+    p.dx = p.x - p.prevX;
+  }
 }
 
 // Put every moving defender back at its starting spot, heading right.
