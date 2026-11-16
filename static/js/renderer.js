@@ -9,6 +9,11 @@ const EAR_HOLE = "#1A1A1A";
 const PLATFORM_TOP = "#C9A66B";
 const PLATFORM_BODY = "#4B5563";
 const PLATFORM_LINE = "#2D3340";
+const END_ZONE_COLOR = "#B91C1C";
+const END_ZONE_STRIPE = "#FFFFFF";
+const GOALPOST_COLOR = "#FACC15";
+const MESSAGE_COLOR = "#FFFFFF";
+const MESSAGE_OUTLINE = "#000000";
 
 // How far the face mask sticks out past the helmet circle, and how thick its bars are.
 // player.js uses these to keep the whole mask on screen.
@@ -41,6 +46,49 @@ function drawPlatforms(ctx, platforms) {
       ctx.fillRect(x, p.y + 8, 3, p.height - 8);
     }
   }
+}
+
+// The end zone is a painted red zone with a white goal line on its left edge and a
+// yellow goalpost (a base pole, a crossbar and two uprights) standing in the middle.
+function drawGoal(ctx, goal) {
+  if (!goal) return;
+
+  ctx.fillStyle = END_ZONE_COLOR;
+  ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
+
+  ctx.fillStyle = END_ZONE_STRIPE;
+  ctx.fillRect(goal.x, goal.y, 4, goal.height);
+
+  const postX = goal.x + goal.width / 2;
+  const bottom = goal.y + goal.height;
+  const crossbarY = goal.y + goal.height * 0.45;
+  const uprightHalf = 16;
+
+  ctx.strokeStyle = GOALPOST_COLOR;
+  ctx.lineWidth = 4;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(postX, bottom);
+  ctx.lineTo(postX, crossbarY);
+  ctx.moveTo(postX - uprightHalf, crossbarY);
+  ctx.lineTo(postX + uprightHalf, crossbarY);
+  ctx.moveTo(postX - uprightHalf, crossbarY);
+  ctx.lineTo(postX - uprightHalf, goal.y);
+  ctx.moveTo(postX + uprightHalf, crossbarY);
+  ctx.lineTo(postX + uprightHalf, goal.y);
+  ctx.stroke();
+}
+
+function drawMessage(ctx, canvas, text) {
+  ctx.font = "bold 64px sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.lineWidth = 8;
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = MESSAGE_OUTLINE;
+  ctx.strokeText(text, canvas.width / 2, canvas.height / 2);
+  ctx.fillStyle = MESSAGE_COLOR;
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 }
 
 function drawPlayer(ctx, player) {
@@ -89,9 +137,11 @@ function drawPlayer(ctx, player) {
   ctx.stroke();
 }
 
-function drawScene(ctx, canvas, player) {
+function drawScene(ctx, canvas, player, status) {
   drawSky(ctx, canvas);
   drawField(ctx, canvas);
+  drawGoal(ctx, world.goal);
   drawPlatforms(ctx, world.platforms);
   drawPlayer(ctx, player);
+  if (status === STATUS_LEVEL_COMPLETE) drawMessage(ctx, canvas, "TOUCHDOWN!");
 }

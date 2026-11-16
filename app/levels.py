@@ -11,6 +11,8 @@ LEVELS = {
             {"x": 520, "y": 310, "width": 150, "height": 30},  # 84 above field
             {"x": 650, "y": 220, "width": 130, "height": 30},  # 90 above platform 3
         ],
+        # End zone at the right edge, standing on the field (field top y = 394).
+        "goal": {"x": 720, "y": 294, "width": 80, "height": 100},
     },
 }
 
