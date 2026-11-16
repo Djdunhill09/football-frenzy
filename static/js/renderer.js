@@ -1,6 +1,10 @@
 const FIELD_HEIGHT = 56;
 
 const SKY_COLOR = "#87CEEB";
+const NIGHT_SKY_COLOR = "#0B1230";
+const DEFENDER_COLOR = "#1D4ED8";
+const DEFENDER_TRIM = "#E5E7EB";
+const DEFENDER_SKIN = "#F1C27D";
 const FIELD_COLOR = "#2E8B57";
 const HELMET_COLOR = "#C8102E";
 const HELMET_STRIPE = "#000000";
@@ -25,13 +29,16 @@ const MASK_TIP_OFFSET = 13;
 const MASK_LINE_WIDTH = 2.5;
 
 function drawSky(ctx, canvas) {
-  ctx.fillStyle = SKY_COLOR;
+  ctx.fillStyle = world.sky === "night" ? NIGHT_SKY_COLOR : SKY_COLOR;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function drawField(ctx, canvas) {
+  // Only the ground segments get grass; the space between them is a gap showing the sky.
   ctx.fillStyle = FIELD_COLOR;
-  ctx.fillRect(0, canvas.height - FIELD_HEIGHT, canvas.width, FIELD_HEIGHT);
+  for (const g of world.ground) {
+    ctx.fillRect(g.x, canvas.height - FIELD_HEIGHT, g.width, FIELD_HEIGHT);
+  }
 }
 
 // Each platform is a raised bleacher block: a wooden plank top over a dark steel body
@@ -85,8 +92,27 @@ function drawGoal(ctx, goal) {
 
 // Each tackling sled is a steel frame with a padded block on top, a gray runner
 // along the bottom and two upright pads.
+function drawDefender(ctx, h) {
+  const headR = 9;
+  const cx = h.x + h.width / 2;
+  // White pants, a blue jersey and a blue helmet, so he reads differently from red Blitz.
+  ctx.fillStyle = DEFENDER_TRIM;
+  ctx.fillRect(h.x + 4, h.y + h.height - 14, h.width - 8, 14);
+  ctx.fillStyle = DEFENDER_COLOR;
+  ctx.fillRect(h.x, h.y + headR * 2 - 2, h.width, h.height - headR * 2 - 12);
+  ctx.beginPath();
+  ctx.arc(cx, h.y + headR, headR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = DEFENDER_SKIN;
+  ctx.fillRect(cx - 6, h.y + headR, 12, 4);
+}
+
 function drawHazards(ctx, hazards) {
   for (const h of hazards) {
+    if (h.kind === "defender") {
+      drawDefender(ctx, h);
+      continue;
+    }
     ctx.fillStyle = SLED_RUNNER;
     ctx.fillRect(h.x, h.y + h.height - 5, h.width, 5);
 
@@ -99,16 +125,17 @@ function drawHazards(ctx, hazards) {
   }
 }
 
-function drawDowns(ctx, downs) {
+function drawDowns(ctx, downs, level) {
   ctx.font = "bold 20px sans-serif";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
   ctx.lineWidth = 4;
   ctx.lineJoin = "round";
   ctx.strokeStyle = MESSAGE_OUTLINE;
-  ctx.strokeText(`Downs: ${downs}`, 12, 10);
+  const text = `Downs: ${downs}   Level ${level}`;
+  ctx.strokeText(text, 12, 10);
   ctx.fillStyle = HUD_COLOR;
-  ctx.fillText(`Downs: ${downs}`, 12, 10);
+  ctx.fillText(text, 12, 10);
 }
 
 function drawMessage(ctx, canvas, text, yOffset = 0, fontSize = 64) {
@@ -170,15 +197,22 @@ function drawPlayer(ctx, player) {
   ctx.stroke();
 }
 
-function drawScene(ctx, canvas, player, status, downs) {
+function drawScene(ctx, canvas, player, status, downs, level) {
   drawSky(ctx, canvas);
   drawField(ctx, canvas);
   drawGoal(ctx, world.goal);
   drawPlatforms(ctx, world.platforms);
   drawHazards(ctx, world.hazards);
   drawPlayer(ctx, player);
-  drawDowns(ctx, downs);
-  if (status === STATUS_LEVEL_COMPLETE) drawMessage(ctx, canvas, "TOUCHDOWN!");
+  drawDowns(ctx, downs, level);
+  if (status === STATUS_LEVEL_COMPLETE) {
+    drawMessage(ctx, canvas, "TOUCHDOWN!");
+    drawMessage(ctx, canvas, "Press Enter for the next level", 50, 28);
+  }
+  if (status === STATUS_WON) {
+    drawMessage(ctx, canvas, "YOU WIN!");
+    drawMessage(ctx, canvas, "Press R to play again", 50, 28);
+  }
   if (status === STATUS_GAME_OVER) {
     drawMessage(ctx, canvas, "TURNOVER ON DOWNS");
     drawMessage(ctx, canvas, "Press R to restart", 50, 28);

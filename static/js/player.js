@@ -48,7 +48,12 @@ function updatePlayer(dt, canvasWidth, canvasHeight) {
   // Find the highest surface his feet crossed this frame (platforms or the field).
   let landingY = null;
   const fieldTop = canvasHeight - FIELD_HEIGHT;
-  if (bottom >= fieldTop) landingY = fieldTop;
+  // The field only counts where there is turf under him (not in a gap), and like the
+  // platforms it only catches his feet if they were above it last frame.
+  const overGround = world.ground.some(
+    (g) => player.x + player.width > g.x && player.x < g.x + g.width
+  );
+  if (overGround && prevBottom <= fieldTop && bottom >= fieldTop) landingY = fieldTop;
 
   // One-way platforms: only count them while falling (vy >= 0), and only if his
   // feet were at or above the top last frame, so he passes up through from below.

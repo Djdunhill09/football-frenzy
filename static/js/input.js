@@ -14,6 +14,9 @@ input.jumpPressed = false;
 // True for one frame after a fresh R key press. game.js clears it after reading.
 input.restartPressed = false;
 
+// True for one frame after a fresh Enter key press. game.js clears it after reading.
+input.nextPressed = false;
+
 function setKey(event, isDown) {
   if (JUMP_KEYS.includes(event.key)) {
     // event.repeat is true while the key is held, so only a new press counts.
@@ -25,6 +28,12 @@ function setKey(event, isDown) {
   if (event.key === "r" || event.key === "R") {
     // Ignore key repeat so holding R restarts only once.
     if (isDown && !event.repeat) input.restartPressed = true;
+    return;
+  }
+
+  if (event.key === "Enter") {
+    // Ignore key repeat so holding Enter advances only once.
+    if (isDown && !event.repeat) input.nextPressed = true;
     return;
   }
 
@@ -46,4 +55,5 @@ window.addEventListener("blur", () => {
   input.right = false;
   input.jumpPressed = false;
   input.restartPressed = false;
+  input.nextPressed = false;
 });
