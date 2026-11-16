@@ -25,6 +25,11 @@ function updatePlayer(dt, canvasWidth) {
 
   player.x += player.vx * dt;
 
-  // Keep Blitz fully inside the canvas.
-  player.x = Math.max(0, Math.min(player.x, canvasWidth - player.width));
+  // Keep the whole helmet, including the face mask, inside the canvas.
+  // The mask sticks out on the side Blitz faces, so that side needs extra room.
+  // Derived from renderer.js (read here at call time, since renderer.js loads later).
+  const maskReach = MASK_TIP_OFFSET + MASK_LINE_WIDTH / 2;
+  const minX = player.facing === "left" ? maskReach : 0;
+  const maxX = canvasWidth - player.width - (player.facing === "right" ? maskReach : 0);
+  player.x = Math.max(minX, Math.min(player.x, maxX));
 }

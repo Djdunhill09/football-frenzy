@@ -7,6 +7,11 @@ const HELMET_STRIPE = "#000000";
 const MASK_GRAY = "#6B7280";
 const EAR_HOLE = "#1A1A1A";
 
+// How far the face mask sticks out past the helmet circle, and how thick its bars are.
+// player.js uses these to keep the whole mask on screen.
+const MASK_TIP_OFFSET = 13;
+const MASK_LINE_WIDTH = 2.5;
+
 function drawSky(ctx, canvas) {
   ctx.fillStyle = SKY_COLOR;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -42,11 +47,11 @@ function drawPlayer(ctx, player) {
   ctx.fill();
 
   ctx.strokeStyle = MASK_GRAY;
-  ctx.lineWidth = 2.5;
+  ctx.lineWidth = MASK_LINE_WIDTH;
   ctx.lineCap = "round";
 
   const barOffsets = [-6, 0, 6];
-  const maskTip = cx + dir * (radius + 13);
+  const maskTip = cx + dir * (radius + MASK_TIP_OFFSET);
 
   for (const offset of barOffsets) {
     const inside = radius * radius - offset * offset;
