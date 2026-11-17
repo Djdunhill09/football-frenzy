@@ -28,7 +28,14 @@ function renderScoreBoard(entries) {
   }
 }
 
+const STATIC_SCORES_NOTE = "High scores only work when running the Flask version locally.";
+
 async function loadScoreBoard() {
+  if (window.STATIC_MODE === true) {
+    scorePanel.list.replaceChildren();
+    scorePanel.list.textContent = STATIC_SCORES_NOTE;
+    return;
+  }
   try {
     const response = await fetch("/api/scores");
     if (!response.ok) throw new Error(`Score request failed: ${response.status}`);
@@ -41,6 +48,7 @@ async function loadScoreBoard() {
 
 // Show the form when a game ends (game over or win); hide it again once play restarts.
 function updateScorePanel(status, score) {
+  if (window.STATIC_MODE === true) return; // no server, so the form stays hidden
   if (status === scorePanel.lastStatus) return;
   scorePanel.lastStatus = status;
   if (status === STATUS_GAME_OVER || status === STATUS_WON) {

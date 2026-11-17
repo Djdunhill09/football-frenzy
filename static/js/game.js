@@ -31,12 +31,33 @@ function rectsOverlap(a, b) {
 
 // Fetch /api/levels/<n> and load it into world. Returns "ok", "missing" (404, no such
 // level) or "error" (network or server problem).
+// Static mode (GitHub Pages): window.STATIC_MODE is set by the generated docs/index.html,
+// and every level comes from one levels.json file instead of the Flask API.
+let staticLevelsPromise = null;
+
+async function fetchLevelData(levelNumber) {
+  if (window.STATIC_MODE === true) {
+    if (!staticLevelsPromise) {
+      staticLevelsPromise = fetch("levels.json").then((response) => {
+        if (!response.ok) throw new Error(`levels.json request failed: ${response.status}`);
+        return response.json();
+      });
+      staticLevelsPromise.catch(() => { staticLevelsPromise = null; }); // allow a retry
+    }
+    const levels = await staticLevelsPromise;
+    return levels[levelNumber] || null; // null = no such level
+  }
+  const response = await fetch(`/api/levels/${levelNumber}`);
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`Level request failed: ${response.status}`);
+  return response.json();
+}
+
 async function loadLevelFromServer(levelNumber) {
   try {
-    const response = await fetch(`/api/levels/${levelNumber}`);
-    if (response.status === 404) return "missing";
-    if (!response.ok) throw new Error(`Level request failed: ${response.status}`);
-    loadLevel(await response.json());
+    const data = await fetchLevelData(levelNumber);
+    if (data === null) return "missing";
+    loadLevel(data);
     currentLevel = levelNumber;
     return "ok";
   } catch (error) {

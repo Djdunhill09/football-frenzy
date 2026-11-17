@@ -1,0 +1,285 @@
+{
+  "1": {
+    "number": 1,
+    "name": "Practice Field",
+    "sky": "day",
+    "ground": [
+      {
+        "x": 0,
+        "width": 800
+      }
+    ],
+    "platforms": [
+      {
+        "x": 100,
+        "y": 310,
+        "width": 140,
+        "height": 30
+      },
+      {
+        "x": 320,
+        "y": 230,
+        "width": 140,
+        "height": 30
+      },
+      {
+        "x": 520,
+        "y": 310,
+        "width": 150,
+        "height": 30
+      },
+      {
+        "x": 650,
+        "y": 220,
+        "width": 130,
+        "height": 30
+      }
+    ],
+    "start": {
+      "x": 40,
+      "y": 354
+    },
+    "hazards": [
+      {
+        "x": 260,
+        "y": 364,
+        "width": 50,
+        "height": 30
+      },
+      {
+        "x": 465,
+        "y": 364,
+        "width": 50,
+        "height": 30
+      }
+    ],
+    "goal": {
+      "x": 720,
+      "y": 294,
+      "width": 80,
+      "height": 100
+    },
+    "footballs": [
+      {
+        "x": 158,
+        "y": 288
+      },
+      {
+        "x": 378,
+        "y": 208
+      },
+      {
+        "x": 273,
+        "y": 330
+      },
+      {
+        "x": 704,
+        "y": 198
+      }
+    ]
+  },
+  "2": {
+    "number": 2,
+    "name": "Opening Game Day",
+    "sky": "night",
+    "ground": [
+      {
+        "x": 0,
+        "width": 250
+      },
+      {
+        "x": 360,
+        "width": 200
+      },
+      {
+        "x": 690,
+        "width": 110
+      }
+    ],
+    "platforms": [
+      {
+        "x": 275,
+        "y": 330,
+        "width": 60,
+        "height": 30
+      },
+      {
+        "x": 400,
+        "y": 300,
+        "width": 110,
+        "height": 30
+      },
+      {
+        "x": 585,
+        "y": 320,
+        "width": 80,
+        "height": 30
+      }
+    ],
+    "start": {
+      "x": 40,
+      "y": 354
+    },
+    "hazards": [
+      {
+        "kind": "defender",
+        "x": 130,
+        "y": 344,
+        "width": 30,
+        "height": 50
+      },
+      {
+        "kind": "defender",
+        "x": 450,
+        "y": 344,
+        "width": 30,
+        "height": 50
+      }
+    ],
+    "goal": {
+      "x": 720,
+      "y": 294,
+      "width": 80,
+      "height": 100
+    },
+    "footballs": [
+      {
+        "x": 295,
+        "y": 308
+      },
+      {
+        "x": 448,
+        "y": 278
+      },
+      {
+        "x": 603,
+        "y": 298
+      },
+      {
+        "x": 135,
+        "y": 270
+      },
+      {
+        "x": 618,
+        "y": 235
+      }
+    ]
+  },
+  "3": {
+    "number": 3,
+    "name": "The Final Drive",
+    "sky": "night",
+    "weather": "rain",
+    "ground": [
+      {
+        "x": 0,
+        "width": 180
+      },
+      {
+        "x": 270,
+        "width": 150
+      },
+      {
+        "x": 510,
+        "width": 290
+      }
+    ],
+    "mud": [
+      {
+        "x": 80,
+        "y": 386,
+        "width": 70,
+        "height": 8
+      },
+      {
+        "x": 545,
+        "y": 386,
+        "width": 80,
+        "height": 8
+      }
+    ],
+    "platforms": [
+      {
+        "x": 550,
+        "y": 265,
+        "width": 50,
+        "height": 30
+      },
+      {
+        "x": 620,
+        "y": 200,
+        "width": 45,
+        "height": 30
+      },
+      {
+        "x": 720,
+        "y": 115,
+        "width": 80,
+        "height": 30
+      },
+      {
+        "x": 420,
+        "y": 330,
+        "width": 50,
+        "height": 30,
+        "minX": 420,
+        "maxX": 460,
+        "speed": 50
+      }
+    ],
+    "start": {
+      "x": 40,
+      "y": 354
+    },
+    "hazards": [
+      {
+        "kind": "defender",
+        "x": 300,
+        "y": 344,
+        "width": 30,
+        "height": 50,
+        "minX": 300,
+        "maxX": 385,
+        "speed": 70
+      },
+      {
+        "kind": "defender",
+        "x": 650,
+        "y": 344,
+        "width": 30,
+        "height": 50,
+        "minX": 650,
+        "maxX": 750,
+        "speed": 90
+      }
+    ],
+    "goal": {
+      "x": 720,
+      "y": 35,
+      "width": 80,
+      "height": 80
+    },
+    "footballs": [
+      {
+        "x": 213,
+        "y": 330
+      },
+      {
+        "x": 440,
+        "y": 308
+      },
+      {
+        "x": 563,
+        "y": 243
+      },
+      {
+        "x": 633,
+        "y": 178
+      },
+      {
+        "x": 330,
+        "y": 275
+      }
+    ]
+  }
+}
