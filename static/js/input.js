@@ -17,6 +17,12 @@ input.restartPressed = false;
 // True for one frame after a fresh Enter key press. game.js clears it after reading.
 input.nextPressed = false;
 
+// True for one frame after a fresh P key press. game.js clears it after reading.
+input.pausePressed = false;
+
+// True after the window loses focus. game.js clears it after reading.
+input.windowBlurred = false;
+
 function setKey(event, isDown) {
   if (JUMP_KEYS.includes(event.key)) {
     // event.repeat is true while the key is held, so only a new press counts.
@@ -28,6 +34,12 @@ function setKey(event, isDown) {
   if (event.key === "r" || event.key === "R") {
     // Ignore key repeat so holding R restarts only once.
     if (isDown && !event.repeat) input.restartPressed = true;
+    return;
+  }
+
+  if (event.key === "p" || event.key === "P") {
+    // Ignore key repeat so holding P toggles pause only once.
+    if (isDown && !event.repeat) input.pausePressed = true;
     return;
   }
 
@@ -61,4 +73,6 @@ window.addEventListener("blur", () => {
   input.jumpPressed = false;
   input.restartPressed = false;
   input.nextPressed = false;
+  input.pausePressed = false;
+  input.windowBlurred = true; // game.js pauses if the game is being played
 });

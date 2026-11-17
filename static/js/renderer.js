@@ -183,12 +183,12 @@ function drawFootballs(ctx, footballs) {
   }
 }
 
-function drawMessage(ctx, canvas, text, yOffset = 0, fontSize = 64) {
+function drawMessage(ctx, canvas, text, yOffset = 0, fontSize = 64, outline = 8) {
   const y = canvas.height / 2 + yOffset;
   ctx.font = `bold ${fontSize}px sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.lineWidth = 8;
+  ctx.lineWidth = outline;
   ctx.lineJoin = "round";
   ctx.strokeStyle = MESSAGE_OUTLINE;
   ctx.strokeText(text, canvas.width / 2, y);
@@ -252,7 +252,23 @@ function drawScene(ctx, canvas, player, status, hud) {
   drawFootballs(ctx, world.footballs);
   drawPlayer(ctx, player);
   drawRain(ctx, canvas);
-  drawHud(ctx, canvas, hud, player);
+  if (status !== STATUS_TITLE) drawHud(ctx, canvas, hud, player);
+  if (status === STATUS_TITLE) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.72)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    drawMessage(ctx, canvas, "FOOTBALL FRENZY", -130, 56);
+    drawMessage(ctx, canvas, "Get Blitz to the end zone in all 3 levels", -70, 20, 3);
+    drawMessage(ctx, canvas, "without losing 3 downs.", -44, 20, 3);
+    drawMessage(ctx, canvas, "Left/Right or A/D: run     Space/Up/W: jump", 8, 18, 3);
+    drawMessage(ctx, canvas, "P: pause     R: restart     Enter: start or continue", 36, 18, 3);
+    drawMessage(ctx, canvas, "Press Enter to start", 110, 30, 5);
+  }
+  if (status === STATUS_PAUSED) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    drawMessage(ctx, canvas, "PAUSED");
+    drawMessage(ctx, canvas, "Press P to resume", 50, 28);
+  }
   if (status === STATUS_LEVEL_COMPLETE) {
     drawMessage(ctx, canvas, "TOUCHDOWN!");
     drawMessage(ctx, canvas, "Press Enter for the next level", 50, 28);

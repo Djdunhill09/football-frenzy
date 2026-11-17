@@ -1,4 +1,6 @@
+const STATUS_TITLE = "title"; // the start screen shown when the page loads
 const STATUS_PLAYING = "playing";
+const STATUS_PAUSED = "paused";
 const STATUS_LEVEL_COMPLETE = "levelComplete";
 const STATUS_LOADING = "loading"; // waiting for the next level to arrive from the server
 const STATUS_WON = "won";
@@ -8,7 +10,7 @@ const STARTING_DOWNS = 3;
 const FOOTBALL_POINTS = 100;
 const TOUCHDOWN_POINTS = 500;
 
-let gameStatus = STATUS_PLAYING;
+let gameStatus = STATUS_TITLE;
 let downs = STARTING_DOWNS;
 let currentLevel = 1;
 let score = 0; // the only copy of the score; carries across levels, reset by R
@@ -105,11 +107,29 @@ function startGame(canvas, ctx) {
 
   function loop(now) {
     // Seconds since the previous frame, capped so a background tab can't cause a huge jump.
+    // lastTime is refreshed on EVERY frame, including title/paused ones, so the first
+    // frame after resuming measures only one frame's worth of time, not the pause.
     const dt = Math.min((now - lastTime) / 1000, 0.05);
     lastTime = now;
 
-    if (input.restartPressed) restartGame(canvas);
+    // R restarts from any status except the title screen, so it can't skip the title.
+    if (input.restartPressed && gameStatus !== STATUS_TITLE) restartGame(canvas);
     input.restartPressed = false; // consume the press so it restarts only once
+
+    // Enter on the title screen starts Level 1 with full downs and a score of 0.
+    if (input.nextPressed && gameStatus === STATUS_TITLE) restartGame(canvas);
+
+    // P toggles pause, but only between playing and paused. Losing window focus pauses.
+    if (input.pausePressed) {
+      if (gameStatus === STATUS_PLAYING) gameStatus = STATUS_PAUSED;
+      else if (gameStatus === STATUS_PAUSED) gameStatus = STATUS_PLAYING;
+    }
+    input.pausePressed = false;
+    if (input.windowBlurred && gameStatus === STATUS_PLAYING) gameStatus = STATUS_PAUSED;
+    input.windowBlurred = false;
+
+    // A jump pressed while not playing (title, pause) must not fire when play starts.
+    if (gameStatus !== STATUS_PLAYING) input.jumpPressed = false;
 
     // Enter only does something on the touchdown screen. Switching to "loading" while
     // the request runs stops a second press from starting another request.
@@ -145,7 +165,7 @@ function startGame(canvas, ctx) {
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawScene(ctx, canvas, player, gameStatus, { score, downs, level: currentLevel });
+    drawScene(ctx, canvas, player, gameStatus, { score, downs, level: currentLevel, status: gameStatus });
     requestAnimationFrame(loop);
   }
 

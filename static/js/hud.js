@@ -39,6 +39,17 @@ function drawHud(ctx, canvas, hud, player) {
   drawHudText(ctx, `Score: ${hud.score}`, 12, 10, "left");
   drawHudText(ctx, `Downs: ${hud.downs}   Level ${hud.level}`, 12, 34, "left");
 
+  if (hud.status === STATUS_PLAYING) {
+    ctx.font = "14px sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = HUD_OUTLINE;
+    ctx.strokeText("P: Pause", 12, 60);
+    ctx.fillStyle = HUD_TEXT;
+    ctx.fillText("P: Pause", 12, 60);
+  }
+
   const progress = levelProgress(player);
   drawHudText(ctx, `Yards gained: ${Math.round(progress * 100)}%`, BAR_X + BAR_WIDTH, 10, "right");
   ctx.fillStyle = BAR_BACK;
