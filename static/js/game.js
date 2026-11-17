@@ -164,6 +164,7 @@ function startGame(canvas, ctx) {
       }
     }
 
+    updateScorePanel(gameStatus, score); // shows the name form when the game ends
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawScene(ctx, canvas, player, gameStatus, { score, downs, level: currentLevel, status: gameStatus });
     requestAnimationFrame(loop);

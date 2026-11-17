@@ -1,10 +1,47 @@
 /* No scrollbars or page scrolling while playing. */
 html, body {
   margin: 0;
-  height: 100%;
-  overflow: hidden;
+}
+
+/* The page is canvas (450 px) plus the score panel; it only scrolls if the window is short. */
+body {
+  font-family: sans-serif;
 }
 
 canvas {
   display: block; /* removes the small gap under an inline canvas that caused overflow */
+}
+
+#score-panel {
+  width: 800px;
+  box-sizing: border-box;
+  padding: 12px 16px;
+}
+
+#score-panel h2 {
+  margin: 8px 0;
+  font-size: 18px;
+}
+
+#score-list {
+  margin: 0;
+  padding-left: 28px;
+}
+
+#score-form {
+  margin-bottom: 8px;
+}
+
+#score-form[hidden] {
+  display: none;
+}
+
+#score-final {
+  margin: 0 0 8px;
+  font-weight: bold;
+}
+
+#score-message {
+  margin: 6px 0 0;
+  min-height: 1.2em;
 }

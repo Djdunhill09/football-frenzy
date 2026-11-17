@@ -24,6 +24,10 @@ input.pausePressed = false;
 input.windowBlurred = false;
 
 function setKey(event, isDown) {
+  // Typing in the name form must not move, pause or restart the game.
+  const tag = event.target && event.target.tagName;
+  if (tag === "INPUT" || tag === "BUTTON") return;
+
   if (JUMP_KEYS.includes(event.key)) {
     // event.repeat is true while the key is held, so only a new press counts.
     if (isDown && !event.repeat) input.jumpPressed = true;
