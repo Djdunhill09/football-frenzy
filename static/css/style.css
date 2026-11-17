@@ -1,0 +1,10 @@
+/* No scrollbars or page scrolling while playing. */
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+canvas {
+  display: block; /* removes the small gap under an inline canvas that caused overflow */
+}

@@ -37,6 +37,11 @@ function setKey(event, isDown) {
     return;
   }
 
+  if (event.key === "ArrowDown") {
+    event.preventDefault(); // stop Down Arrow from scrolling the page
+    return;
+  }
+
   if (LEFT_KEYS.includes(event.key)) {
     input.left = isDown;
     event.preventDefault(); // stop arrow keys from scrolling the page

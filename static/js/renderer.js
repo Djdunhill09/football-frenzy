@@ -22,7 +22,8 @@ const SLED_RUNNER = "#9CA3AF";
 const MUD_COLOR = "#6B4423";
 const MUD_DARK = "#4A2F18";
 const RAIN_COLOR = "rgba(190, 210, 255, 0.55)";
-const HUD_COLOR = "#FFFFFF";
+const FOOTBALL_COLOR = "#8B4513";
+const FOOTBALL_LACE = "#FFFFFF";
 const MESSAGE_COLOR = "#FFFFFF";
 const MESSAGE_OUTLINE = "#000000";
 
@@ -159,17 +160,27 @@ function drawRain(ctx, canvas) {
   ctx.stroke();
 }
 
-function drawDowns(ctx, downs, level) {
-  ctx.font = "bold 20px sans-serif";
-  ctx.textAlign = "left";
-  ctx.textBaseline = "top";
-  ctx.lineWidth = 4;
-  ctx.lineJoin = "round";
-  ctx.strokeStyle = MESSAGE_OUTLINE;
-  const text = `Downs: ${downs}   Level ${level}`;
-  ctx.strokeText(text, 12, 10);
-  ctx.fillStyle = HUD_COLOR;
-  ctx.fillText(text, 12, 10);
+function drawFootballs(ctx, footballs) {
+  for (const f of footballs) {
+    if (f.collected) continue;
+    const cx = f.x + f.width / 2;
+    const cy = f.y + f.height / 2;
+    ctx.fillStyle = FOOTBALL_COLOR;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, f.width / 2, f.height / 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = FOOTBALL_LACE;
+    ctx.lineWidth = 1.5;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(cx - 5, cy);
+    ctx.lineTo(cx + 5, cy);
+    for (let x = cx - 3; x <= cx + 3; x += 3) {
+      ctx.moveTo(x, cy - 3);
+      ctx.lineTo(x, cy + 3);
+    }
+    ctx.stroke();
+  }
 }
 
 function drawMessage(ctx, canvas, text, yOffset = 0, fontSize = 64) {
@@ -231,16 +242,17 @@ function drawPlayer(ctx, player) {
   ctx.stroke();
 }
 
-function drawScene(ctx, canvas, player, status, downs, level) {
+function drawScene(ctx, canvas, player, status, hud) {
   drawSky(ctx, canvas);
   drawField(ctx, canvas);
   drawGoal(ctx, world.goal);
   drawMud(ctx, world.mud);
   drawPlatforms(ctx, world.platforms);
   drawHazards(ctx, world.hazards);
+  drawFootballs(ctx, world.footballs);
   drawPlayer(ctx, player);
   drawRain(ctx, canvas);
-  drawDowns(ctx, downs, level);
+  drawHud(ctx, canvas, hud, player);
   if (status === STATUS_LEVEL_COMPLETE) {
     drawMessage(ctx, canvas, "TOUCHDOWN!");
     drawMessage(ctx, canvas, "Press Enter for the next level", 50, 28);

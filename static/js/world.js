@@ -10,7 +10,11 @@ const world = {
   mud: [], // each: { x, y, width, height }; slows Blitz while he overlaps one
   weather: null, // "rain" or null
   goal: null, // { x, y, width, height } in canvas pixels, or null if the level has none
+  footballs: [], // each: { x, y, collected }; size is FOOTBALL_WIDTH x FOOTBALL_HEIGHT
 };
+
+const FOOTBALL_WIDTH = 24;
+const FOOTBALL_HEIGHT = 16;
 
 function loadLevel(levelData) {
   world.number = levelData.number;
@@ -23,8 +27,21 @@ function loadLevel(levelData) {
   world.goal = levelData.goal || null;
   world.mud = levelData.mud || [];
   world.weather = levelData.weather || null;
+  // Fresh objects from the server, each starting uncollected (this is the level-load reset).
+  world.footballs = (levelData.footballs || []).map((f) => ({
+    x: f.x,
+    y: f.y,
+    width: FOOTBALL_WIDTH,
+    height: FOOTBALL_HEIGHT,
+    collected: false,
+  }));
   resetHazards();
   resetPlatforms();
+}
+
+// Make every football on this level uncollectable-again (used when R restarts Level 1).
+function resetFootballs() {
+  for (const f of world.footballs) f.collected = false;
 }
 
 // Put every moving platform back at its starting spot, heading right, and clear its

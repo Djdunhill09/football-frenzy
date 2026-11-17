@@ -5,10 +5,13 @@ const STATUS_WON = "won";
 const STATUS_GAME_OVER = "gameOver";
 
 const STARTING_DOWNS = 3;
+const FOOTBALL_POINTS = 100;
+const TOUCHDOWN_POINTS = 500;
 
 let gameStatus = STATUS_PLAYING;
 let downs = STARTING_DOWNS;
 let currentLevel = 1;
+let score = 0; // the only copy of the score; carries across levels, reset by R
 
 // Bumped on every level load request so a slow, outdated response can be ignored.
 let levelRequestId = 0;
@@ -55,7 +58,9 @@ async function restartGame(canvas) {
     if (id !== levelRequestId || result !== "ok") return; // superseded, or load failed
   }
   placePlayerAtStart(canvas);
+  resetFootballs(); // Level 1 may not have been reloaded, so un-collect its footballs
   downs = STARTING_DOWNS;
+  score = 0;
   gameStatus = STATUS_PLAYING;
 }
 
@@ -80,6 +85,17 @@ function loseDown(canvas) {
   downs -= 1;
   placePlayerAtStart(canvas);
   if (downs <= 0) gameStatus = STATUS_GAME_OVER;
+}
+
+// Collect every uncollected football Blitz overlaps. The collected flag is what stops
+// a football from being counted again on later frames or after a respawn.
+function collectFootballs() {
+  for (const f of world.footballs) {
+    if (!f.collected && rectsOverlap(player, f)) {
+      f.collected = true;
+      score += FOOTBALL_POINTS;
+    }
+  }
 }
 
 function startGame(canvas, ctx) {
@@ -121,13 +137,15 @@ function startGame(canvas, ctx) {
           }
         }
       }
+      if (gameStatus === STATUS_PLAYING) collectFootballs();
       if (gameStatus === STATUS_PLAYING && world.goal && rectsOverlap(player, world.goal)) {
         gameStatus = STATUS_LEVEL_COMPLETE;
+        score += TOUCHDOWN_POINTS; // only runs on the one frame the status flips
       }
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawScene(ctx, canvas, player, gameStatus, downs, currentLevel);
+    drawScene(ctx, canvas, player, gameStatus, { score, downs, level: currentLevel });
     requestAnimationFrame(loop);
   }
 

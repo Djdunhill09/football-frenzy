@@ -24,6 +24,14 @@ LEVELS = {
         ],
         # End zone at the right edge, standing on the field (field top y = 394).
         "goal": {"x": 720, "y": 294, "width": 80, "height": 100},
+        # Footballs (24x16, x/y is the top-left corner). Main route: on platforms 1 and 2.
+        # Optional: one in the air above the first sled, one on the high last platform.
+        "footballs": [
+            {"x": 158, "y": 288},  # on platform 1
+            {"x": 378, "y": 208},  # on platform 2
+            {"x": 273, "y": 330},  # optional: mid-jump over the first sled
+            {"x": 704, "y": 198},  # optional: on the high last platform
+        ],
     },
     2: {
         "number": 2,
@@ -51,6 +59,13 @@ LEVELS = {
             {"kind": "defender", "x": 450, "y": 344, "width": 30, "height": 50},  # turf 2
         ],
         "goal": {"x": 720, "y": 294, "width": 80, "height": 100},
+        "footballs": [
+            {"x": 295, "y": 308},  # main route: on the first stepping stone
+            {"x": 448, "y": 278},  # main route: on the platform above defender 2
+            {"x": 603, "y": 298},  # main route: on the stone over gap 2
+            {"x": 135, "y": 270},  # optional: high over defender 1
+            {"x": 618, "y": 235},  # optional: high above the last stone
+        ],
     },
     3: {
         "number": 3,
@@ -91,6 +106,13 @@ LEVELS = {
              "minX": 650, "maxX": 750, "speed": 90},   # turf 3, under the stairs
         ],
         "goal": {"x": 720, "y": 35, "width": 80, "height": 80},
+        "footballs": [
+            {"x": 213, "y": 330},  # main route: mid-jump over gap 1
+            {"x": 440, "y": 308},  # main route: on the moving platform
+            {"x": 563, "y": 243},  # main route: on the first stair
+            {"x": 633, "y": 178},  # main route: on the second stair
+            {"x": 330, "y": 275},  # optional: high over the patrolling defender
+        ],
     },
 }
 
